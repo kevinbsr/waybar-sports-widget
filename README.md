@@ -20,9 +20,7 @@ any generic Waybar setup.
 - 🎨 **Unified Theme Integration:** Uses your active Omarchy theme colors
   (`@accent` for favorite scores, `@color2` for active live games, `@color3` for
   scheduled games, and `@color8` for inactive fallbacks).
-- 🌐 **Full English Localization:** All match details, statistics (Possession,
-  Shots on Target, Field Goals, Rebounds), and schedules are fully localized
-  in English.
+- 📊 **Live Stats & Scorers:** Hovering over the widget displays real-time statistics (Possession, Shots, Field Goals, Rebounds) and lists goalscorers (football) or the last basket scorer (basketball).
 - 🔗 **Google Search Integration:** Click the widget in the status bar to
   automatically open a Google Search query for details on the active/prioritized
   match.
