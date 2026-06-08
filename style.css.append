@@ -1,0 +1,44 @@
+
+/* --- WAYBAR SPORTS WIDGET START --- */
+#custom-sports-widget {
+  margin: 0 7.5px;
+  transition: all 0.3s ease;
+}
+
+#custom-sports-widget:hover {
+  color: @accent;
+}
+
+#custom-sports-widget.live-target,
+#custom-sports-widget.live-mock {
+  background-color: alpha(@accent, 0.15);
+  color: @accent;
+  border: 1px solid alpha(@accent, 0.4);
+  border-radius: 12px;
+  padding: 0 10px;
+  margin: 2px 7.5px;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+#custom-sports-widget.live-target:hover,
+#custom-sports-widget.live-mock:hover {
+  background-color: alpha(@accent, 0.25);
+  border-color: alpha(@accent, 0.6);
+  box-shadow: 0 0 5px alpha(@accent, 0.4);
+}
+
+/* Subtle theme-color coding for general states to integrate perfectly with the menu bar */
+#custom-sports-widget.live-general {
+  color: @color2; /* Vibrant theme green for active general live games */
+}
+
+#custom-sports-widget.upcoming-general {
+  color: @color3; /* Orange/Yellow for upcoming scheduled games */
+}
+
+#custom-sports-widget.no-events {
+  color: @color8; /* Muted/Inactive grey when there are no events today */
+}
+/* --- WAYBAR SPORTS WIDGET END --- */
