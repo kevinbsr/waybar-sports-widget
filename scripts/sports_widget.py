@@ -193,7 +193,7 @@ def is_target_match(event, sport):
     for team in CONFIG["preferred_teams"]:
         team = team.lower()
         if team == "brazil" or team == "brasil":
-            is_brazil = "brazil" in home_name or "brasil" in home_name or "brazil" in away_name or "brasil" in away_name
+            is_brazil = home_name in ["brazil", "brasil"] or away_name in ["brazil", "brasil"]
             is_national = home.get("national") is True or away.get("national") is True
             if is_brazil and is_national:
                 return "brazil"
