@@ -12,7 +12,7 @@ END="\033[0m"
 echo -e "${BOLD}${BLUE}=== Waybar Sports Widget Installer ===${END}"
 
 # Base raw URL for raw files (Change this to your actual github username/repo/branch before publishing!)
-GITHUB_USER="your-username"
+GITHUB_USER="kevinbsr"
 GITHUB_REPO="waybar-sports-widget"
 GITHUB_BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}"
