@@ -306,6 +306,71 @@ def fetch_statistics(event_id, sport):
                 
     return "\n".join(lines) if lines else None
 
+def fetch_incidents_details(event_id, sport, home_name, away_name):
+    url = f"https://api.sofascore.com/api/v1/event/{event_id}/incidents"
+    data = fetch_json(url)
+    if not data or "incidents" not in data:
+        return None
+        
+    incidents = data["incidents"]
+    if not incidents:
+        return None
+        
+    if sport == "football":
+        home_goals = []
+        away_goals = []
+        
+        for inc in reversed(incidents):
+            if inc.get("incidentType") == "goal":
+                player_name = inc.get("player", {}).get("name", "Unknown")
+                time_min = inc.get("time", 0)
+                added = inc.get("addedTime")
+                time_str = f"{time_min}+{added}" if added and added != 999 else f"{time_min}"
+                
+                inc_class = inc.get("incidentClass", "")
+                suffix = ""
+                if inc_class == "penalty":
+                    suffix = " (pen.)"
+                elif inc_class == "ownGoal":
+                    suffix = " (o.g.)"
+                    
+                goal_str = f"{player_name} {time_str}'{suffix}"
+                
+                if inc.get("isHome"):
+                    home_goals.append(goal_str)
+                else:
+                    away_goals.append(goal_str)
+                    
+        lines = []
+        if home_goals or away_goals:
+            lines.append("<b>Goals:</b>")
+            if home_goals:
+                lines.append(f"• {home_name}: {', '.join(home_goals)}")
+            if away_goals:
+                lines.append(f"• {away_name}: {', '.join(away_goals)}")
+        return "\n".join(lines) if lines else None
+        
+    elif sport == "basketball":
+        for inc in incidents:
+            if inc.get("incidentType") == "goal":
+                player_name = inc.get("player", {}).get("name", "Unknown")
+                inc_class = inc.get("incidentClass", "")
+                
+                pt_str = ""
+                if inc_class == "onePoint":
+                    pt_str = " (1pt)"
+                elif inc_class == "twoPoints":
+                    pt_str = " (2pts)"
+                elif inc_class == "threePoints":
+                    pt_str = " (3pts)"
+                    
+                is_home = inc.get("isHome")
+                side = home_name if is_home else away_name
+                
+                return f"🏀 <b>Last basket:</b> {player_name}{pt_str} ({side})"
+                
+    return None
+
 def get_demo_match(demo_type):
     if demo_type == "flamengo":
         return {
@@ -661,6 +726,7 @@ def main():
         text = f"{home_code} {home_goals}-{away_goals} {away_code}"
             
         stats_text = fetch_statistics(target_live.get("id"), target_sport)
+        incidents_text = fetch_incidents_details(target_live.get("id"), target_sport, home.get("name", "Home"), away.get("name", "Away"))
         
         tooltip_lines = [
             f"<b>🏆 {tournament_name}</b>",
@@ -669,6 +735,10 @@ def main():
             f"<i>Game time: {live_time}</i>"
         ]
         
+        if incidents_text:
+            tooltip_lines.append("")
+            tooltip_lines.append(incidents_text)
+            
         if stats_text:
             tooltip_lines.append("")
             tooltip_lines.append(stats_text)
@@ -721,9 +791,10 @@ def main():
                         end_time = start_ts + 130 * 60
 
                 stats_text = fetch_statistics(event.get("id"), sport)
-
                 home = event.get("homeTeam", {})
                 away = event.get("awayTeam", {})
+                incidents_text = fetch_incidents_details(event.get("id"), sport, home.get("name", "Home"), away.get("name", "Away"))
+                
                 home_code = get_clean_code(home)
                 away_code = get_clean_code(away)
                 home_goals = event.get("homeScore", {}).get("current", 0)
@@ -741,7 +812,8 @@ def main():
                     "tournament_name": tournament_name,
                     "sport": sport,
                     "end_time": end_time,
-                    "stats_text": stats_text
+                    "stats_text": stats_text,
+                    "incidents_text": incidents_text
                 }
                 save_cache(cache)
 
@@ -769,6 +841,7 @@ def main():
         sport = target_finished["sport"]
 
         text = f"{home_code} {home_goals}-{away_goals} {away_code}"
+        incidents_text = target_finished.get("incidents_text")
 
         tooltip_lines = [
             f"<b>🏆 {tournament_name} (Finished)</b>",
@@ -776,6 +849,10 @@ def main():
             f"<b>{home_name}</b>  {home_goals} - {away_goals}  <b>{away_name}</b>",
             "<i>Status: FT</i>"
         ]
+
+        if incidents_text:
+            tooltip_lines.append("")
+            tooltip_lines.append(incidents_text)
 
         if stats_text:
             tooltip_lines.append("")
