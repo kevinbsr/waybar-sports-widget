@@ -7,6 +7,7 @@ import time
 import urllib.parse
 import urllib.request
 from datetime import datetime
+import subprocess
 
 # Special flag emojis for countries/entities where simple ISO 3166-1 alpha-2 mapping is not enough
 SPECIAL_COUNTRY_FLAGS = {
@@ -114,15 +115,16 @@ def get_flag(event_team):
 
 def fetch_json(url):
     try:
-        req = urllib.request.Request(
-            url, 
-            headers={
-                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept-Language': 'en-US,en;q=0.9'
-            }
-        )
-        with urllib.request.urlopen(req, timeout=5) as response:
-            return json.loads(response.read().decode())
+        cmd = [
+            "curl", "-s", "--max-time", "5",
+            "-H", "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "-H", "Accept-Language: en-US,en;q=0.9",
+            url
+        ]
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        if res.returncode != 0 or not res.stdout.strip():
+            return None
+        return json.loads(res.stdout)
     except Exception:
         return None
 
@@ -136,7 +138,7 @@ def get_live_minute(event, sport):
         return desc
         
     if sport == "football":
-        if status_code == 7 or desc.lower() in ["halftime", "intervalo", "half-time"]:
+        if status_code == 31 or desc.lower() in ["halftime", "intervalo", "half-time"]:
             return "Halftime"
             
         t = event.get("time", {})
