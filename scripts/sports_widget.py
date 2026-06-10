@@ -788,7 +788,13 @@ def main():
                     end_time = current_time
                 else:
                     if sport == "football":
-                        end_time = start_ts + 105 * 60
+                        t = event.get("time", {})
+                        current_period_start = t.get("currentPeriodStartTimestamp")
+                        injury_time_2 = t.get("injuryTime2", 0)
+                        if current_period_start:
+                            end_time = current_period_start + (45 + injury_time_2) * 60
+                        else:
+                            end_time = start_ts + 105 * 60
                     else:
                         end_time = start_ts + 130 * 60
 
