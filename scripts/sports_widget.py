@@ -207,10 +207,12 @@ def is_target_match(event, sport):
     for event_keyword in CONFIG["priority_events"]:
         event_keyword = event_keyword.lower()
         if "nba finals" in event_keyword:
-            if sport == "basketball" and "nba" in tournament_name and ("final" in tournament_name or "final" in event.get("stage_name", "").lower() or "final" in event.get("status", {}).get("description", "").lower()):
+            round_name = event.get("roundInfo", {}).get("name", "").lower()
+            if sport == "basketball" and "nba" in tournament_name and ("final" in tournament_name or "final" in event.get("stage_name", "").lower() or "final" in round_name or "final" in event.get("status", {}).get("description", "").lower()):
                 return "nba_finals"
         elif "world cup finals" in event_keyword or "copa do mundo final" in event_keyword:
-            if sport == "football" and ("world cup" in tournament_name or "copa do mundo" in tournament_name) and ("final" in tournament_name or "final" in event.get("stage_name", "").lower() or "final" in event.get("status", {}).get("description", "").lower()):
+            round_name = event.get("roundInfo", {}).get("name", "").lower()
+            if sport == "football" and ("world cup" in tournament_name or "copa do mundo" in tournament_name) and ("final" in tournament_name or "final" in event.get("stage_name", "").lower() or "final" in round_name or "final" in event.get("status", {}).get("description", "").lower()):
                 return "worldcup_finals"
         else:
             category_name = tournament.get("category", {}).get("name", "").lower()
