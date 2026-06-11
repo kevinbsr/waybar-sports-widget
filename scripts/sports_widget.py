@@ -806,7 +806,7 @@ def main():
             match_id = str(event.get("id"))
             if match_id not in cache["finished_matches"]:
                 start_ts = event.get("startTimestamp", current_time)
-                if match_id in cache.get("last_live_target_ids", []):
+                if match_id in cache.get("last_live_target_ids", []) or (current_time - start_ts < 18000):
                     end_time = current_time
                 else:
                     if sport == "football":
