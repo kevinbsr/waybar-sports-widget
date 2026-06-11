@@ -873,11 +873,12 @@ def main():
         text = f"{home_code} {home_goals}-{away_goals} {away_code}"
         incidents_text = target_finished.get("incidents_text")
 
+        status_label = "Final" if sport == "basketball" else "FT"
         tooltip_lines = [
             f"<b>🏆 {tournament_name} (Finished)</b>",
             "────────────────────────",
             f"<b>{home_name}</b>  {home_goals} - {away_goals}  <b>{away_name}</b>",
-            "<i>Status: FT</i>"
+            f"<i>Status: {status_label}</i>"
         ]
 
         if incidents_text:
@@ -1010,7 +1011,8 @@ def main():
             if m_status_type == "finished":
                 m_home_goals = m.get("homeScore", {}).get("current", 0)
                 m_away_goals = m.get("awayScore", {}).get("current", 0)
-                status_str = f"{m_home_goals}-{m_away_goals} (FT)"
+                suffix = "Final" if s == "basketball" else "FT"
+                status_str = f"{m_home_goals}-{m_away_goals} ({suffix})"
             else:
                 status_str = f"at {m_time}"
                 
