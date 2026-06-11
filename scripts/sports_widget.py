@@ -166,7 +166,19 @@ def get_live_minute(event, sport):
         played = t.get("played")
         period_length = t.get("periodLength")
         if played is not None and period_length is not None:
-            remaining = max(0, period_length - played)
+            q_match = re.search(r"(\d+)", desc)
+            if q_match:
+                q = int(q_match.group(1))
+                current_quarter_played = max(0, played - (q - 1) * period_length)
+                remaining = max(0, period_length - current_quarter_played)
+            elif "overtime" in desc.lower():
+                ot_len = t.get("overtimeLength", 300)
+                prev_played = 4 * period_length
+                current_ot_played = max(0, played - prev_played)
+                remaining = max(0, ot_len - current_ot_played)
+            else:
+                remaining = max(0, period_length - played)
+                
             mins = remaining // 60
             secs = remaining % 60
             return f"{desc} ({mins}:{secs:02d})"
