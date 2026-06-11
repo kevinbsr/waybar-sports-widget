@@ -162,6 +162,14 @@ def get_live_minute(event, sport):
             return f"{max(0, minute)}'"
             
     elif sport == "basketball":
+        t = event.get("time", {})
+        played = t.get("played")
+        period_length = t.get("periodLength")
+        if played is not None and period_length is not None:
+            remaining = max(0, period_length - played)
+            mins = remaining // 60
+            secs = remaining % 60
+            return f"{desc} ({mins}:{secs:02d})"
         return desc
         
     return desc
